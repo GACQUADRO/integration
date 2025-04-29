@@ -7,7 +7,7 @@ pipeline {
             steps {
                 git branch: 'source', url: 'https://github.com/bart120/m2-cicd.git' // plugin Git
                 sh 'ls -R ${WORKSPACE}'
-                stash name: 'source-code', includes: '**'  // ✅ correct name + syntaxe
+                stash name: 'source-code', includes: '**' 
             }
         }
 
@@ -16,7 +16,7 @@ pipeline {
                 label 'docker-agent-python'
             }
             steps {
-                unstash 'source-code'  // ✅ correspond au bon stash
+                unstash 'source-code'  
                 sh 'ls -R ${WORKSPACE}' 
                 sh 'pip install -r back/requirements.txt'
             }
@@ -27,7 +27,7 @@ pipeline {
                 label 'agent-python-test'
             }
             steps {
-                unstash 'source-code'  // ✅ correspond au bon stash
+                unstash 'source-code'  
                 echo 'Running default test...'
 
                 // Crée un test minimal si aucun n'existe
@@ -38,7 +38,7 @@ pipeline {
                 fi
                 '''
 
-                // Lance pytest avec rapport JUnit
+
                 sh 'pytest tests/'
             }
         }
