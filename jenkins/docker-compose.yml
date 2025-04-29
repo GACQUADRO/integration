@@ -13,6 +13,20 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - jenkins
+  pytest-agent:
+    image: pytest-agent:latest
+    container_name: agent-python-test
+    restart: unless-stopped
+    user: root
+    environment:
+      - JENKINS_URL=http://jenkins:8080
+      - JENKINS_AGENT_NAME=agent-python-test
+      - JENKINS_SECRET=9cc5f79a811ce14001fa4add219202d1b27b8b6261e494fe8f1fd2f7a90d90eb
+      - JENKINS_AGENT_WORKDIR=/home/jenkins
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - jenkins
   jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins
