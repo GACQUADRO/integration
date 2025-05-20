@@ -35,7 +35,7 @@ pipeline {
                 unstash 'source-code'
                 script {
                     def scannerHome = tool 'SonarQube Scanner'
-                    withSonarQubeEnv('SonarQube') {
+                    withSonarQubeEnv('scanner') { 
                         sh "cd back && sonar-scanner"
                     }
                 }
