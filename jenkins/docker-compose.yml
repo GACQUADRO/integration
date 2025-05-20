@@ -1,32 +1,32 @@
-version: '3.8'
 services:
-  jenkins-agent-python-test:
-    image: jenkins-agent-python-test:latest
-    container_name: jenkins-agent-python-test
-    restart: unless-stopped
-    depends_on:
-      - jenkins
-    environment:
-      - JENKINS_URL=http://jenkins:8080
-      - JENKINS_AGENT_NAME=docker-agent-python-test
-      - JENKINS_SECRET=269108a1498d5cd54c80e39c27e58e352a8e5fe49dc6e493c95ae51e1e7aedad
-      - JENKINS_AGENT_WORKDIR=/home/jenkins
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
   jenkins-agent-python:
     image: jenkins-agent-python:latest
     container_name: jenkins-agent-python
     restart: unless-stopped
-    depends_on:
-      - jenkins
+    user: root
     environment:
       - JENKINS_URL=http://jenkins:8080
       - JENKINS_AGENT_NAME=docker-agent-python
-      - JENKINS_SECRET=08d59b3c48983d6e3b49ca264ff0f56755b11aa7c9b7e4ded5f7c6fdf41fcc4f
+      - JENKINS_SECRET=b3b04952b61b8f8169f04ca0ed99a74ab3ed99dc69d5e44709eb4cd7c7c9436f
       - JENKINS_AGENT_WORKDIR=/home/jenkins
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-
+    depends_on:
+      - jenkins
+  pytest-agent:
+    image: pytest-agent:latest
+    container_name: agent-python-test
+    restart: unless-stopped
+    user: root
+    environment:
+      - JENKINS_URL=http://jenkins:8080
+      - JENKINS_AGENT_NAME=agent-python-test
+      - JENKINS_SECRET=9cc5f79a811ce14001fa4add219202d1b27b8b6261e494fe8f1fd2f7a90d90eb
+      - JENKINS_AGENT_WORKDIR=/home/jenkins
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - jenkins
   jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins
@@ -34,11 +34,12 @@ services:
       - "8080:8080"
       - "50000:50000"
     volumes:
-      - D:/docker/jenkins:/var/jenkins_home
+      - /Users/gregoire/Desktop/ytrack/integration/cours1/jenkins:/var/jenkins_home
     restart: unless-stopped
     user: root
     environment:
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
+      
 
   sonarqube:
     image: sonarqube:community
@@ -46,22 +47,24 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - D:/docker/sonarqube_data:/opt/sonarqube/data
-      - D:/docker/sonarqube_extensions:/opt/sonarqube/extensions
+      - /Users/gregoire/docker/sonarqube_data:/opt/sonarqube/data
+      - /Users/gregoire/docker/sonarqube_extensions:/opt/sonarqube/extensions
     restart: unless-stopped
     environment:
       - SONAR_JDBC_URL=jdbc:postgresql://sonar-db:5432/sonarqube
       - SONAR_JDBC_USERNAME=sonar
       - SONAR_JDBC_PASSWORD=sonar
+      - SONAR_SEARCH_JAVA_OPTS=-Xms1G -Xmx1G
     depends_on:
       - sonar-db
-      
+
   sonar-db:
     image: postgres:13
     container_name: sonar-db
     volumes:
-      - D:/docker/sonar-db:/var/lib/postgresql/data
+      - /Users/gregoire/docker/sonar-db:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=sonar
       - POSTGRES_PASSWORD=sonar
       - POSTGRES_DB=sonarqube
+    restart: unless-stopped
