@@ -1,2 +1,0 @@
-blabla
-https://github.com/bart120/m2-cicd.git
