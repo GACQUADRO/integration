@@ -29,6 +29,19 @@ pipeline {
                 sh 'cd backend && pytest || echo "No tests found"'
             }
         }
+        stage('SonarQube Analysis') {
+            agent any
+            steps {
+                unstash 'source-code'
+                script {
+                    def scannerHome = tool 'SonarQube Scanner'
+                    withSonarQubeEnv('SonarQube') {
+                        sh "cd back && sonar-scanner"
+                    }
+                }
+            }
+        }
+
         stage('Deploy') {
             agent any
             steps {
