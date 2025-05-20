@@ -2,27 +2,19 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('Build') {
             steps {
-                git branch: 'source', url:'https://github.com/GACQUADRO/integration.git'
-            }
-        }
-        stage('Build backend') {
-            agent {
-                label 'docker-agent-python'
-            }
-            steps {
-                sh 'pip install -r back/requirements.txt'
+                echo 'Building..'
             }
         }
         stage('Test') {
             steps {
-                echo 'Testing...'
+                echo 'Testing..'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying...'
+                echo 'Deploying....'
             }
         }
     }
