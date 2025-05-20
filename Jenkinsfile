@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout code') {
             agent any
             steps {
-                git branch: 'source', url: 'https://github.com/bart120/m2-cicd.git' // plugin Git
+                git branch: 'source', url: 'https://github.com/GACQUADRO/integration.git' // plugin Git
                 sh 'ls -R ${WORKSPACE}'
                 stash name: 'source-code', includes: '**' 
             }
@@ -30,7 +30,7 @@ pipeline {
                 unstash 'source-code'  
                 echo 'Running default test...'
 
-                // Crée un test minimal si aucun n'existe
+
                 sh '''
                 mkdir -p tests
                 if [ ! -f tests/test_default.py ]; then
